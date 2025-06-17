@@ -1,0 +1,78 @@
+      
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ customer.email }}!</h1>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <h2>Email Processing Job</h2>
+
+    {% if email_job %}
+        <p>Status: {{ email_job.status }}</p>
+        {% if email_job.status == "running" %}
+            <form method="post" action="{{ url_for('cancel_email_job') }}">
+                <input type="submit" value="Cancel Job">
+            </form>
+        {% endif %}
+    {% else %}
+        <p>No job scheduled</p>
+    {% endif %}
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('start_job') }}">
+        <label for="subject_line">Subject Line:</label><br>
+        <input type="text" id="subject_line" name="subject_line"><br><br>
+        <input type="submit" value="Start Job">
+    </form>
+
+    <h2>Products</h2>
+        <ul>
+        {% for product in customer.products %}
+            <li>
+                {{ product.name }}
+                <a href="{{ url_for('view_attachment', product_id=product.id) }}" target="_blank">View Attachment</a>
+                {% if product.approved %}
+                    (Approved)
+                {% else %}
+                    <button onclick="approveProduct({{ product.id }})">Approve</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+      <h2>Jobs</h2>
+        <ul>
+        {% for job in customer.jobs_list %}
+            <li>
+                Job Id: {{ job.id }}, {{ job.job_type }}
+                Status: {{job.status}}, Log: {{job.log_message}}
+            </li>
+        {% endfor %}
+    </ul>
+     <script>
+        function approveProduct(productId) {
+            fetch('/approve_product/' + productId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload(); // Refresh the page
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
+
+    

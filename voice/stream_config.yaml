@@ -1,0 +1,10 @@
+version: 1.0
+language: "english"
+stt_model: "whisper"
+model_name: "small"
+stream_rate: 22050
+twilio_rate: 8000
+stream_sid: None
+settings:
+    debug: true
+    api_key: "your_api_key"

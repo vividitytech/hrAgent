@@ -1,0 +1,63 @@
+      
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Scheduler</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to get the task status and update the page
+            function updateTaskStatus(taskId) {
+                $.ajax({
+                    url: '/get_task_status/' + taskId,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#taskStatus').text('Task Status: ' + response.status);
+                    },
+                    error: function(error) {
+                        console.error('Error getting task status:', error);
+                        $('#taskStatus').text('Error getting task status.');
+                    }
+                });
+            }
+
+            // Schedule a new task
+            $('#scheduleButton').click(function() {
+                $.ajax({
+                    url: '/schedule_task',
+                    type: 'POST',
+                    success: function(response) {
+                        $('#scheduleId').text('Schedule ID: ' + response.schedule_id);
+                        $('#taskId').text('Task ID: ' + response.task_id);
+                        // Store the task ID for later status updates
+                        taskId = response.task_id;
+                         //Initially update the task status
+                        updateTaskStatus(taskId);
+                         // Periodically update the task status
+                        setInterval(function() {
+                            updateTaskStatus(taskId);
+                        }, 2000); // Update every 2 seconds
+                    },
+                    error: function(error) {
+                        console.error('Error scheduling task:', error);
+                    }
+                });
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+    <h1>Task Scheduler</h1>
+    <p>User ID: {{ user_id }}</p>
+
+    <button id="scheduleButton">Schedule Task</button>
+
+    <p id="scheduleId">Schedule ID: </p>
+    <p id="taskId">Task ID: </p>
+    <p id="taskStatus">Task Status: </p>
+
+
+</body>
+</html>

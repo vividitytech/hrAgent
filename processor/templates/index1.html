@@ -1,0 +1,44 @@
+      
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Review</title>
+</head>
+<body>
+    <h1>Product Review</h1>
+    <ul>
+        {% for product in products %}
+            <li>
+                {{ product.product_name }}
+                <a href="{{ url_for('view_attachment', product_id=product.id) }}" target="_blank">View Attachment</a>
+                <div>Email Vendor Status: {{ product.vendor_status }}</div>
+                <div>Approved Status: {{ product.approved }}</div>
+                {% if product.approved %}
+                    (Approved)
+                {% else %}
+                    <button onclick="approveProduct({{ product.id }})">Approve</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function approveProduct(productId) {
+            fetch('/approve_product/' + productId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload(); // Refresh the page
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+    

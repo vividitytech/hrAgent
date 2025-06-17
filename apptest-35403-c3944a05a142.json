@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "apptest-35403",
+  "private_key_id": "c3944a05a1420b0d915846b514f6978f34a1d5d4",
+  "private_key": "-----BEGIN PRIVATE KEY----------END PRIVATE KEY-----\n",
+  "client_email": "calendar-email@apptest-35403.iam.gserviceaccount.com",
+  "client_id": "104935943416144183736",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/calendar-email%40apptest-35403.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

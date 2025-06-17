@@ -1,0 +1,63 @@
+      
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Review</title>
+</head>
+<body>
+    <h1>Product Review</h1>
+    <ul>
+        {% for product in products %}
+            <li>
+                {{ product.name }}
+                <a href="{{ url_for('view_attachment', product_id=product.id) }}" target="_blank">View Attachment</a>
+
+                <div>
+                    {% set email_job = product.jobs | selectattr('job_type', 'equalto', 'email_processing') | first %}
+                    Email Processing Status:
+                    {% if email_job %}
+                        {{ email_job.status }} - {{ email_job.log_message }}
+                    {% else %}
+                        Not Started
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% set meeting_job = product.jobs | selectattr('job_type', 'equalto', 'meeting_scheduling') | first %}
+                    Meeting Scheduling Status:
+                    {% if meeting_job %}
+                        {{ meeting_job.status }} - {{ meeting_job.log_message }}
+                    {% else %}
+                        Not Started
+                    {% endif %}
+                </div>
+
+                {% if product.approved %}
+                    (Approved)
+                {% else %}
+                    <button onclick="approveProduct({{ product.id }})">Approve</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function approveProduct(productId) {
+            fetch('/approve_product/' + productId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload(); // Refresh the page
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+    

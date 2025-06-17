@@ -1,0 +1,113 @@
+      
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot with File Upload</title>
+    <style>
+        #chat-container {
+            width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #eee;
+            padding: 5px;
+        }
+        #input-area {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Chatbot</h1>
+        <div id="messages"></div>
+
+        <div id="input-area">
+            <input type="hidden" id="sessionId" name="session_id" value="">
+            <input type="file" id="file-upload">
+            <br><br>
+            <input type="text" id="url-input" placeholder="Enter URL to compare (optional)">
+            <br><br>
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let filepath = null; // Store the filepath after upload
+        let session_id = ""; // Store the session ID
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error uploading file: ' + data.error);
+                    filepath = null;
+                } else {
+                    alert('File uploaded!');
+                    filepath = data.filepath;  // Store the filepath
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during file upload.');
+                filepath = null;
+            });
+        });
+
+
+        function sendMessage() {
+
+            const sessionId = document.getElementById("sessionId");
+
+            // Add session ID to the form data if it exists
+            if (sessionId) {
+                session_id = sessionId.value;
+            }
+
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            const url = document.getElementById('url-input').value;
+
+
+            if (message.trim() === '') return;
+
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<p><b>You:</b> ${message}</p>`;
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message, filepath: filepath, url: url, session_id: session_id }) // Send filepath and URL
+            })
+            .then(response => response.json())
+            .then(data => {
+                messagesDiv.innerHTML += `<p><b>Chatbot:</b> ${data.response}</p>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+                messageInput.value = ''; // Clear input
+                //update session_id
+                document.getElementById("sessionId").value = data.session_id; // Store in hidden input field
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messagesDiv.innerHTML += `<p><b>Error:</b> An error occurred.</p>`;
+            });
+        }
+    </script>
+</body>
+</html>

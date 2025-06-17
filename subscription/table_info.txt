@@ -1,0 +1,47 @@
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE subscriptions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    type ENUM('pay_as_you_go', 'monthly', 'yearly') NOT NULL,
+    price DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE user_subscriptions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    subscription_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,  -- Can be NULL for pay_as_you_go
+    status ENUM('active', 'inactive', 'canceled') NOT NULL DEFAULT 'active',
+    next_payment_date DATE,
+    payment_method_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (subscription_id) REFERENCES subscriptions(id),
+    FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id)
+);
+
+CREATE TABLE payments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_subscription_id INT NOT NULL,
+    payment_date DATETIME NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    transaction_id VARCHAR(255) NOT NULL,  -- Store the payment gateway's transaction ID
+    status ENUM('success', 'failed') NOT NULL,
+    payment_method VARCHAR(255), -- e.g., 'credit_card', 'paypal'
+    FOREIGN KEY (user_subscription_id) REFERENCES user_subscriptions(id)
+);
+
+CREATE TABLE payment_methods (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    type VARCHAR(255) NOT NULL, -- e.g., 'credit_card', 'paypal'
+    details TEXT NOT NULL, -- Store tokenized card data or PayPal email
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

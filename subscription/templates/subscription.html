@@ -1,0 +1,400 @@
+      
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subscription Example</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            padding: 20px;
+            /*font-family: sans-serif;*/
+        }
+        /*.container {
+        display: flex;
+        align-items: center; /* Vertically align items 
+        }
+        */
+        #price-display {
+        margin-left: 10px;
+        font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Subscription Management</h1>
+    <div id="messages"></div>
+
+    <div>
+        <!--<h1>Subscription Selection</h1>-->
+
+        <div class="container">
+        <label for="subscription-type">Select Subscription Type:</label>
+        <select id="subscription-type" name="subscription-type">
+            <option value="">-- Select a Type --</option>
+            <!-- Options will be dynamically added here -->
+        </select>
+        <span id="price-display"></span>
+        </div>
+    </div>
+
+    <script>
+        // Sample Data (Replace this with actual data from your database)
+        const subscriptionData = [
+        { type: 'pay_as_you_go', price: 0.10 },
+        { type: 'monthly', price: 20.00 },
+        { type: 'yearly', price: 200.00 }
+        ];
+    
+    
+        const selectElement = document.getElementById('subscription-type');
+        const priceDisplay = document.getElementById('price-display');
+
+        // Fetch subscription data from the server
+        fetch('/get_subscriptions') // Assuming your Flask endpoint is at /subscriptions
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Parse the JSON response
+            })
+            .then(data => {
+            // Populate the dropdown with options from the data
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id.toString();
+                option.textContent = item.name.charAt(0).toUpperCase() + item.name.slice(1).replace('_', ' '); // Capitalize and format
+                selectElement.appendChild(option);
+            });
+
+            // Event listener for dropdown changes
+            selectElement.addEventListener('change', function() {
+                const selectedType =  parseInt(this.value, 10); //selectElement.value//
+                console.log("The value of selectedType is:", selectedType); 
+                if (selectedType) {
+                    // Find the price associated with the selected type
+                    const selectedSubscription = data.find(item => item.id === selectedType);
+
+                    if (selectedSubscription) {
+                        priceDisplay.textContent = `Price: $${selectedSubscription.price}`; //.toFixed(2)
+                    } else {
+                        priceDisplay.textContent = "Price not found.";
+                    }
+                } else {
+                    priceDisplay.textContent = ""; // Clear the price display when no type is selected
+                }
+            });
+            })
+            .catch(error => {
+            console.error('Error fetching data:', error);
+            priceDisplay.textContent = "Error loading subscription types."; // Display an error message
+            });
+
+    </script>
+
+
+
+    <div class="card">
+        <div class="card-header">Payment Information</div>
+        <div class="card-body">
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="card-number">Card Number</label>
+                    <div id="card-number"></div>
+                </div>
+                <div class="form-group">
+                    <label for="card-expiry">Expiration Date</label>
+                    <div id="card-expiry"></div>
+                </div>
+                <div class="form-group">
+                    <label for="card-cvc">CVC</label>
+                    <div id="card-cvc"></div>
+                </div>
+                <!--<button type="submit" disabled="" class="btn btn-primary">Add Payment Method</button>-->
+            </form>
+
+            <!--<script>
+                // A reference to Stripe.js
+                var js_variable = "{{ YOUR_STRIPE_PUBLISHABLE_KEY }}";
+                var stripe = Stripe(js_variable)// Stripe('YOUR_STRIPE_PUBLISHABLE_KEY'); // Replace with your publishable key
+                // Stripe("pk_test_51RGtzxCG44FfDCKDC5Atyv4Wi8HPdadU2Vs6rmPX5zWzLdSyUU0KoaeZi8WrJTJoLO5WMFdYwwEwo3udp4MBLi4M002L8gmds5") //
+                // Create a Card Element
+                var elements = stripe.elements();
+                var style = {
+                  base: {
+                    color: "#32325d",
+                    fontFamily: 'Arial, sans-serif',
+                    fontSmoothing: "antialiased",
+                    fontSize: "16px",
+                    "::placeholder": {
+                      color: "#aab7c4"
+                    }
+                  },
+                  invalid: {
+                    color: "#fa755a",
+                    iconColor: "#fa755a"
+                  }
+                };
+          
+
+                /* //4. Create Card Elements
+                const cardNumber = elements.create('cardNumber', { style: style });
+                const cardExpiry = elements.create('cardExpiry', { style: style });
+                const cardCvc = elements.create('cardCvc', { style: style });
+
+                // 5. Mount Elements to the DOM
+                cardNumber.mount('#card-number');
+                cardExpiry.mount('#card-expiry');
+                cardCvc.mount('#card-cvc');
+                */
+
+                // 6. Handle Real-time Validation Errors
+                cardNumber.on('change', function(event) {
+                    displayError(event);
+                });
+
+                cardExpiry.on('change', function(event) {
+                    displayError(event);
+                });
+
+                cardCvc.on('change', function(event) {
+                    displayError(event);
+                });
+
+
+                function displayError(event) {
+                    const displayError = document.getElementById('card-errors'); // Create element to show error.  You might need to add this to your HTML: <div id="card-errors" role="alert"></div>
+
+                    if(displayError){ // Check if the element exists before trying to interact with it
+                        if (event.error) {
+                        displayError.textContent = event.error.message;
+                        } else {
+                        displayError.textContent = '';
+                        }
+                    }
+
+                }
+          
+                // Handle form submission
+                var form = document.getElementById('paymentForm');
+                form.addEventListener('submit', function(event) {
+                  event.preventDefault();
+          
+                  stripe.createToken(cardNumber).then(function(result) {
+                    if (result.error) {
+                      // Inform the user if there was an error
+                      var errorElement = document.getElementById('card-errors');
+                      errorElement.textContent = result.error.message;
+                    } else {
+                      // Send the token to your server
+                      stripeTokenHandler(result.token);
+                    }
+                  });
+                });
+          
+                function stripeTokenHandler(token) {
+                  // Insert the token ID into the form so it gets submitted to the server
+                  var form = document.getElementById('paymentForm');
+                  var hiddenInput = document.createElement('input');
+                  hiddenInput.setAttribute('type', 'hidden');
+                  hiddenInput.setAttribute('name', 'stripeToken');
+                  hiddenInput.setAttribute('value', token.id);
+                  form.appendChild(hiddenInput);
+          
+                  // Submit the form
+                  form.submit();
+                }
+            </script> -->
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">Subscription Actions</div>
+        <div class="card-body">
+            <button id="subscribeButton" class="btn btn-success">Subscribe to Monthly Plan</button>
+            <button id="cancelButton" class="btn btn-danger">Cancel Subscription</button>
+            <button id="getDetailsButton" class="btn btn-info">Get Subscription Details</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    //------------------------------------------------------
+    // Configuration
+    //------------------------------------------------------
+    const YOUR_STRIPE_PUBLISHABLE_KEY = "pk_test_51RGtzxCG44FfDCKDC5Atyv4Wi8HPdadU2Vs6rmPX5zWzLdSyUU0KoaeZi8WrJTJoLO5WMFdYwwEwo3udp4MBLi4M002L8gmds5"
+    const stripe = Stripe(YOUR_STRIPE_PUBLISHABLE_KEY);  // Replace with your publishable key
+    const elements = stripe.elements();
+    const API_BASE_URL = '/';  // Adjust if your API is hosted elsewhere
+    const USER_ID = 1;  // Replace with the actual user ID (e.g., from a login session)
+
+    //------------------------------------------------------
+    // Stripe Elements Configuration
+    //------------------------------------------------------
+    const cardNumber = elements.create('cardNumber');
+    cardNumber.mount('#card-number');
+
+    const cardExpiry = elements.create('cardExpiry');
+    cardExpiry.mount('#card-expiry');
+
+    const cardCvc = elements.create('cardCvc');
+    cardCvc.mount('#card-cvc');
+
+    //------------------------------------------------------
+    // Functions
+    //------------------------------------------------------
+    function displayMessage(message, type = 'info') {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
+    }
+
+    async function addPaymentMethod(event) {
+        event.preventDefault();
+
+        const {error, paymentMethod} = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardNumber,
+        });
+
+        if (error) {
+            displayMessage(error.message, 'danger');
+        } else {
+            // Send paymentMethod.id to your server to store it
+            try {
+                const response = await fetch(`${API_BASE_URL}add_payment_method`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: USER_ID,
+                        payment_method_id: paymentMethod.id
+                    })
+                });
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayMessage('Payment method added successfully!', 'success');
+                } else {
+                    displayMessage(data.error, 'danger');
+                }
+            } catch (err) {
+                displayMessage(err.message, 'danger');
+            }
+        }
+    }
+
+    async function subscribeToPlan() {
+        try {
+            /*
+            //const expiryParts = cardExpiry.split('/'); // Assuming cardExpiry is in MM/YY format
+            //const expiryMonth = expiryParts[0].trim();
+            //const expiryYear = '20' + expiryParts[1].trim(); // Add 20 to the year to make it YYYY
+            const expiryMonth = cardExpiry.exp_month;
+            const expiryYear = cardExpiry.exp_year*/
+            event.preventDefault();
+            const { token, error } = await stripe.createToken(cardNumber)/*({
+                card: { // Changed this line to 'card'
+                    number: cardNumber,
+                    exp_month: expiryMonth,
+                    exp_year: expiryYear,
+                    cvc: cardCvc,
+                }
+                });*/
+
+            if (error) {
+                // Handle token creation errors
+                console.error('Stripe Token Error:', error);
+                //return { success: false, error: error.message }; // Return an error object
+                displayMessage(error.message, 'danger');
+            }
+
+
+            const price = document.getElementById("price-display");
+            const priceValue = parseFloat( price.value);
+            const dropdown = document.getElementById("subscription-type");
+            const subscription_id = parseInt(dropdown.value);
+            
+            const response = await fetch(`${API_BASE_URL}subscribe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: USER_ID,
+                    price: priceValue,
+                    subscription_id: subscription_id, // Replace with actual subscription ID (monthly)
+                    stripeToken: token.id,    //  Replace with valid payment method ID.
+                })
+            });
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                displayMessage('Subscribed to monthly/yearly plan successfully!', 'success');
+            } else {
+                displayMessage(data.error, 'danger');
+            }
+        } catch (err) {
+            displayMessage(err.message, 'danger');
+        }
+    }
+
+    async function cancelSubscription() {
+        try {
+            const response = await fetch(`${API_BASE_URL}cancel_subscription`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_subscription_id: 1 // Replace with actual user subscription ID
+                })
+            });
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                displayMessage('Subscription canceled successfully!', 'success');
+            } else {
+                displayMessage(data.error, 'danger');
+            }
+        } catch (err) {
+            displayMessage(err.message, 'danger');
+        }
+    }
+
+    async function getSubscriptionDetails() {
+        try {
+            const response = await fetch(`${API_BASE_URL}get_subscription_details?user_id=${USER_ID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+
+            if (response.status === 200) {
+                displayMessage(`Subscription: ${data.subscription_name}, Status: ${data.status}, Next Payment: ${data.next_payment_date}`, 'info');
+            } else {
+                displayMessage(data.message || data.error, 'warning');
+            }
+        } catch (err) {
+            displayMessage(err.message, 'danger');
+        }
+    }
+
+    //------------------------------------------------------
+    // Event Listeners
+    //------------------------------------------------------
+    //document.getElementById('paymentForm').addEventListener('submit', addPaymentMethod);
+    document.getElementById('subscribeButton').addEventListener('click', subscribeToPlan);
+    document.getElementById('cancelButton').addEventListener('click', cancelSubscription);
+    document.getElementById('getDetailsButton').addEventListener('click', getSubscriptionDetails);
+
+</script>
+</body>
+</html>
+
+    

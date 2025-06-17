@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Status Update Example</title>
+</head>
+<body>
+    <h1>Status: <span id="status-display">Initial Status</span></h1>
+    <script>
+        function updateStatus() {
+            fetch('/get_status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('status-display').textContent = data.status;
+                });
+        }
+        setInterval(updateStatus, 3000);
+    </script>
+</body>
+</html>

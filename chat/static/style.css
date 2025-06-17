@@ -1,0 +1,152 @@
+/* Global Styles */
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container Styles */
+.container {
+    width: 90%; /* Take up most of the screen */
+    max-width: 800px; /* Limit maximum width on larger screens */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Chat Container Styles */
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 60vh; /* Use viewport height for flexible sizing */
+    max-height: 600px; /* Limit maximum height on larger screens */
+}
+
+/* Messages Area Styles */
+#messages {
+    flex-grow: 1;
+    padding: 16px;
+    overflow-y: scroll;
+    display: flex;             /* Make #messages a flex container */
+    flex-direction: column;   /* Stack messages vertically */
+    align-items: flex-start;  /* Default alignment to the left */
+}
+
+.message {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.message i { /* Style for Font Awesome icons */
+    margin-right: 5px; /* Add spacing between icon and text */
+    font-size: 1.2em;   /* Adjust icon size */
+    color: #555;      /* Change icon color */
+}
+
+.message .material-icons { /* Style for Material Icons */
+    margin-right: 5px;
+    font-size: 1.2em;
+    color: #555;
+    vertical-align: middle; /* Align icon vertically */
+}
+
+.message-icon {
+    width: 24px;       /* Adjust icon width */
+    height: 24px;      /* Adjust icon height */
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.user-message {
+    background-color: #DCF8C6;
+    text-align: right;
+    margin-left: auto;    /* Push user messages to the right */
+}
+
+.bot-message {
+    background-color: #ECE5DD;
+    text-align: left;
+    margin-right: auto;   /* Push bot messages to the left (default) */
+}
+
+/* Input Area Styles */
+#input-area {
+    display: flex;
+    padding: 16px;
+    border-top: 1px solid #ccc;
+}
+
+#user-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    font-size: 16px;
+}
+
+#file-input {
+    font-size: 16px;        /* Make the font larger (affects button text) */
+    padding: 8px 12px;      /* Add some padding */
+    border-radius: 4px;   /* Add some border radius */
+    /* Further styling may be limited and browser-dependent */
+}
+
+#send-button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+#send-button:hover {
+    background-color: #0056b3;
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    .container {
+        width: 100%; /* Full width on mobile */
+        border-radius: 0; /* Remove rounded corners on mobile */
+        box-shadow: none; /* Remove shadow on mobile */
+    }
+
+    #chat-container {
+        height: 80vh; /* Take more screen space on mobile */
+    }
+
+    #input-area {
+        padding: 8px; /* Reduce padding on mobile */
+    }
+
+    #user-input {
+        font-size: 14px; /* Smaller font size on mobile */
+    }
+
+    #file-input {
+        font-size: 14px; /* Adjust font size on mobile */
+        width: 100%; /* Make full width on mobile */
+        box-sizing: border-box; /* Include padding/border in width */
+    }
+
+    #send-button {
+        padding: 6px 12px; /* Smaller button on mobile */
+        width: 100%; /* Make full width on mobile */
+    }
+
+    .message {
+        max-width: 85%; /* Adjust message width on mobile */
+    }
+}

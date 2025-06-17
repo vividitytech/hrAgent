@@ -1,0 +1,7 @@
+Flask==2.2.2
+twilio==9.5.2
+scipy==1.12.0
+pydub==0.25.1
+PyYAML==6.0.2
+flask-sock==0.7.0
+pyaudio~=0.2

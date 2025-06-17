@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Free Recruiter with AI</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{{url_for('static' , filename = 'assets/img/stats.png')}}" rel="icon">
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{{url_for('static' , filename = 'assets/vendor/aos/aos.css')}}" rel="stylesheet">
+  <link href="{{url_for('static' , filename = 'assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static' , filename = 'assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+  <link href="{{url_for('static' , filename = 'assets/vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static' , filename = 'assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static' , filename = 'assets/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{{url_for('static' , filename = 'assets/css/style.css')}}" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/notifications.css') }}">
+
+</head>
+
+<body>
+
+  <h1>Welcome!</h1>
+
+  {% if message %}
+      <div class="notification {{ message.type }}" id="notification">
+          <span class="close-button" onclick="closeNotification()">×</span>
+          {{ message.text }}
+      </div>
+  {% endif %}
+
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top d-flex align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div class="logo">
+        <h1>
+          <a href="/">FreeRecruiter.ai <span style="font-size: 15px;font-weight: 300;">automated hiring process</span></a>
+        </h1>
+      </div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="/#hero">Home</a></li>
+          <li><a class="nav-link scrollto" href="/#about">About</a></li>
+          <li><a class="nav-link scrollto" href="/#services">Services</a></li>
+          <!-- <li><a class="nav-link scrollto " href="/#portfolio">Portfolio</a></li>-->
+          <!--<li><a class="nav-link scrollto" href="/#team">Team</a></li> -->
+          <li><a class="nav-link scrollto" href="/#pricing">Pricing</a></li>
+          <!--<li class="dropdown"><a><span>Projects</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li class="dropdown"><a href="#"><span>Data Analytics</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                  <li><a href="#">PROJECT 1</a></li>
+                  <li><a href="#">PROJECT 2</a></li>
+                  <li><a href="#">PROJECT 3</a></li>
+                  <li><a href="#">PROJECT 4</a></li>
+                  <li><a href="#">PROJECT 5</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"><a href="#"><span>Machine Learning</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                  <li><a href="#">PROJECT 1</a></li>
+                  <li><a href="#">PROJECT 2</a></li>
+                  <li><a href="#">PROJECT 3</a></li>
+                  <li><a href="#">PROJECT 4</a></li>
+                  <li><a href="#">PROJECT 5</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"><a href="#"><span>Computer Vision</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                  <li><a href="#">PROJECT 1</a></li>
+                  <li><a href="#">PROJECT 2</a></li>
+                  <li><a href="#">PROJECT 3</a></li>
+                  <li><a href="#">PROJECT 4</a></li>
+                  <li><a href="#">PROJECT 5</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"><a href="#"><span>Deep Learning</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                  <li><a href="#">PROJECT 1</a></li>
+                  <li><a href="#">PROJECT 2</a></li>
+                  <li><a href="#">PROJECT 3</a></li>
+                  <li><a href="#">PROJECT 4</a></li>
+                  <li><a href="#">PROJECT 5</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"><a href="#"><span>NLP</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                  <li><a href="#">PROJECT 1</a></li>
+                  <li><a href="#">PROJECT 2</a></li>
+                  <li><a href="#">PROJECT 3</a></li>
+                  <li><a href="#">PROJECT 4</a></li>
+                  <li><a href="#">PROJECT 5</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>-->
+          <li><a class="nav-link scrollto" href="/#contact">Contact</a></li>
+          {% if session['email'] %}
+          <li class="dropdown" style="justify-content: left;">
+            <!--a class="nav-link" href="#" data-bs-toggle="dropdown">
+              {% if session['image']=="" %}
+              <i class='bx bx-user rounded-circle' style="font-size: 25px;"></i>
+              {% else %}
+              <img src="data:image/png;base64, {{session.get('image')}}" alt="Profile"
+                class="rounded-circle" style="height: 30px;width: 30px;">
+              {% endif %}
+              <span class="dropdown-toggle ps-2">{{session.get('first_name')}}</span>
+            </a--><!-- End Profile Iamge Icon -->
+            <a class="nav-link" href="#" data-bs-toggle="dropdown">Profile</a>
+            <ul class="dropdown-menu ">
+              <li class="dropdown-header">
+                <h6>{{session.get('first_name')}}</h6>
+                <span>{{session.get('job')}}</span>
+              </li>
+
+              <li>
+                <a class="dropdown-item" href="/User-Profile">
+                  <i class="bi bi-person"></i>
+                  <span>My Profile</span>
+                </a>
+              </li>
+
+              <li>
+                <a class="dropdown-item" href="#faq">
+                  <i class="bi bi-question-circle"></i>
+                  <span>Need Help?</span>
+                </a>
+              </li>
+
+              <li>
+                <a class="dropdown-item" href="/Logout">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
+                </a>
+              </li>
+
+            </ul><!-- End Profile Dropdown Items -->
+          </li><!-- End Profile Nav -->
+
+          {% else %}
+          <li><a class="getstarted scrollto" href="/Login">Login</a></li>
+          {% endif %}
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+    </div>
+  </header><!-- End Header -->
+
+  {% block body %}
+
+  {% endblock %}
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="row d-flex align-items-center">
+        <div class="col-lg-6 text-lg-left text-center">
+          <div class="copyright">
+            &copy; Copyright <strong>FreeRecruiter.ai</strong>. All Rights Reserved
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <nav class="footer-links text-lg-right text-center pt-2 pt-lg-0">
+            <a href="/#intro" class="scrollto">Home</a>
+            <a href="/#about" class="scrollto">About</a>
+            <a href="{{ url_for('contact') }}" class="scrollto">Contact</a>
+            <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+            <a href="{{ url_for('terms') }}">Terms of Use</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{{url_for('static' , filename = 'assets/vendor/purecounter/purecounter_vanilla.js')}}"></script>
+  <script src="{{url_for('static' , filename = 'assets/vendor/aos/aos.js')}}"></script>
+  <script src="{{url_for('static' , filename = 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+  <script src="{{url_for('static' , filename = 'assets/vendor/glightbox/js/glightbox.min.js')}}"></script>
+  <script src="{{url_for('static' , filename = 'assets/vendor/isotope-layout/isotope.pkgd.min.js')}}"></script>
+  <script src="{{url_for('static' , filename = 'assets/vendor/swiper/swiper-bundle.min.js')}}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{{url_for('static',filename='assets/js/main.js')}}"></script>
+  <script src="{{ url_for('static', filename='assets/js/notifications.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/password_toggle.js') }}"></script>
+</body>
+
+</html>
