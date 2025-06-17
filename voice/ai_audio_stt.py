@@ -9,7 +9,6 @@ import tempfile
 import wave
 import pywav
 # add whisper
-sys.path.append("/home/gangchen/Downloads/project/generative_model/whisper")
 import whisper
 from whisper.tokenizer import get_tokenizer
 
